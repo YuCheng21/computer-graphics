@@ -7,8 +7,11 @@ class Camara:
         self.distance = distance
         self.zoom = zoom
 
-    def convert(self, point: Point3d):
-        td = self.distance - point.z
+    def projection(self, point: Point3d, projection):
+        if projection == 'parallel':
+            td = self.distance
+        else:
+            td = self.distance - point.z
         result = Point3d()
         result.x = point.x / td * self.zoom
         result.y = point.y / td * self.zoom

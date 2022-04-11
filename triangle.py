@@ -86,7 +86,7 @@ class Triangle:
             # 3d to 2d (projection)
             for col in row:
                 index = col - 1
-                buffer.append(camara.convert(self.vertex[index]))
+                buffer.append(camara.projection(self.vertex[index], projection='parallel'))
                 buffer[len(buffer) - 1] = self.re_position(buffer[len(buffer)-1], img.shape)
             # draw frame (triangle)
             for key, value in enumerate(buffer):
