@@ -14,6 +14,7 @@ for i in obj.vertex:
     obj_vertex.append(Point3d(x=i[0], y=i[1], z=i[2]))
 obj_face = obj.face
 
+# camera position: x=0, y=0, z=30
 camara = Camara(20, 3000)
 
 triangle = Triangle()
