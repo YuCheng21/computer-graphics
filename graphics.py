@@ -4,6 +4,17 @@ from math import radians, sin, cos
 import numpy as np
 
 
+def re_position(point, img_shape):
+    """
+    make origin point to the middle
+    """
+    result = np.empty(3)
+    result[0] = img_shape[0] / 2 + point[0]
+    result[1] = img_shape[1] / 2 + point[1]
+    result[2] = point[2]  # do nothing
+    return result
+
+
 class Graphics:
     def __init__(self, face=None, vertex=None) -> None:
         super().__init__()
@@ -16,7 +27,11 @@ class Graphics:
         self.init_y_degree = 0
         self.init_z_degree = 0
 
-    def to_triangle(self):
+    def modeling(self):
+        """
+        1. split rectangle
+        2. rectangle -> triangle
+        """
         plane = []
         for item in self.face:
             while len(item) > 0:
@@ -29,6 +44,9 @@ class Graphics:
         self.face = tri
 
     def translate(self, x: float = 0, y: float = 0, z: float = 0):
+        """
+        Coordinate translation
+        """
         self.init_x += x
         self.init_y += y
         self.init_z += z
@@ -38,10 +56,12 @@ class Graphics:
             item[2] += z
 
     def rotate(self, degree: int, axis: int):
+        """
+        rotate axis x:0, y:1, z:2
+        """
         self.init_x_degree = (self.init_x_degree + degree) % 360 if axis == 0 else self.init_x_degree
         self.init_y_degree = (self.init_y_degree + degree) % 360 if axis == 1 else self.init_y_degree
         self.init_z_degree = (self.init_z_degree + degree) % 360 if axis == 2 else self.init_z_degree
-
         for item in self.vertex:
             rad = radians(degree)
             x = item[0]
@@ -59,20 +79,13 @@ class Graphics:
             else:
                 raise
 
-    def re_position(self, point, img_shape):
-        result = np.empty(3)
-        result[0] = img_shape[0] / 2 + point[0]
-        result[1] = img_shape[1] / 2 + point[1]
-        result[2] = point[2]  # do nothing
-        return result
-
     def draw_frame(self, img, camara):
         for row in self.face:
             buffer = []
             for col in row:
                 index = col - 1
                 buffer.append(camara.convert(self.vertex[index]))
-                buffer[len(buffer) - 1] = self.re_position(buffer[len(buffer) - 1], img.shape)
+                buffer[len(buffer) - 1] = re_position(buffer[len(buffer) - 1], img.shape)
             for key, value in enumerate(buffer):
                 next_key = key + 1
                 next_key = 0 if next_key >= len(buffer) else next_key
