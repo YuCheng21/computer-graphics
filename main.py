@@ -1,35 +1,47 @@
 import cv2
 import numpy as np
 from camara import Camara
-from point3d import Point3d
-from triangle import Triangle
+from graphics import Graphics
 
-import teapot
-import square
+import model.teapot as teapot
+import model.square as square
+import model.triangle as triangle
 
 
-obj = square
-obj_vertex = []
-for i in obj.vertex:
-    obj_vertex.append(Point3d(x=i[0], y=i[1], z=i[2]))
-obj_face = obj.face
+obj = teapot
+obj_vertex = np.array(obj.vertex)
+obj_face = np.array(obj.face)
 
-# camera position: x=0, y=0, z=20
-camara = Camara(20, 3000, projection="prospective")
+camara = Camara(30, 2000, parallel=False)
 
-triangle = Triangle()
-triangle.rect2tri(obj_face, obj_vertex)
-triangle.rotate_x(5)
-triangle.rotate_y(5)
-# triangle.rotate_z(30)
-# triangle.translate(0, 0.3, 0)
-
+graphics = Graphics(obj_face, obj_vertex)
+graphics.to_triangle()
+# Initial
+graphics.rotate(0, axis=0)
+graphics.rotate(0, axis=1)
+graphics.rotate(0, axis=2)
+graphics.translate(0, 0, 0)
 
 img_size = (500, 500)
-img = np.zeros((img_size[0], img_size[1], 3), np.uint8)
 
-triangle.draw_frame(img, camara)
+while True:
+    img = np.zeros((img_size[0], img_size[1], 3), np.uint8)
+    graphics.draw_frame(img, camara)
 
+    cv2.putText(img, f"x_degree: {graphics.init_x_degree};", (200, 25), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 255), 1)
+    cv2.putText(img, f"y_degree: {graphics.init_y_degree};", (200, 50), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 255), 1)
+    cv2.putText(img, f"z_degree: {graphics.init_z_degree};", (200, 75), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 255), 1)
+    cv2.putText(img, f"x: {graphics.init_x};", (325, 25), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 1)
+    cv2.putText(img, f"y: {graphics.init_y};", (325, 50), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 1)
+    cv2.putText(img, f"z: {graphics.init_z};", (325, 75), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 1)
+    cv2.putText(img, f"camara_distance: {camara.distance};", (10, 25), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 255), 1)
+    cv2.putText(img, f"camara_zoom: {camara.zoom};", (10, 50), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 255), 1)
 
-cv2.imshow('img', img)
-cv2.waitKey(0)
+    cv2.imshow('img', img)
+    key = cv2.waitKey()
+    graphics.listener(key)
+    camara.listener(key)
+    if key & 0xFF == ord('p'):
+        break
+
+cv2.destroyAllWindows()
