@@ -4,7 +4,9 @@ import numpy as np
 class Camara:
     def __init__(self, distance, zoom, parallel=False) -> None:
         """
-        camera position: x=0, y=0, z=distance
+        Viewpoint fixed at (x=0, y=0, z=distance)
+        View plane fixed at (x=0, y=0, z=distance-1)
+        Target fixed at (x=0, y=0, z=0)
         """
         super().__init__()
         self.distance = distance
@@ -24,13 +26,13 @@ class Camara:
 
     def listener(self, key):
         # Distance
-        if key & 0xFF == ord('t'):
+        if key & 0xFF == ord('h'):
             self.distance += 1
-        if key & 0xFF == ord('g'):
+        if key & 0xFF == ord('y'):
             self.distance -= 1
         # Zoom
-        if key & 0xFF == ord('y'):
+        if key & 0xFF == ord('g'):
             self.zoom += 10
 
-        if key & 0xFF == ord('h'):
+        if key & 0xFF == ord('t'):
             self.zoom -= 10

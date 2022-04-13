@@ -91,7 +91,7 @@ class Graphics:
                 next_key = 0 if next_key >= len(buffer) else next_key
                 start_point = (int(buffer[key][0]), int(buffer[key][1]))
                 end_point = (int(buffer[next_key][0]), int(buffer[next_key][1]))
-                cv2.line(img, start_point, end_point, (255, 0, 0), 2)
+                cv2.line(img, start_point, end_point, (150, 240, 150), 2)
 
     def listener(self, key):
         # Rotate
