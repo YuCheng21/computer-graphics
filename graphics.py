@@ -1,5 +1,5 @@
 import cv2
-from math import radians, sin, cos
+from math import radians, sin, cos, ceil
 
 import numpy as np
 
@@ -16,7 +16,7 @@ def re_position(point, img_shape):
 
 
 class Graphics:
-    def __init__(self, face=None, vertex=None) -> None:
+    def __init__(self, face: np.ndarray = None, vertex: np.ndarray = None) -> None:
         super().__init__()
         self.face = face
         self.vertex = vertex
@@ -28,20 +28,22 @@ class Graphics:
         self.init_z_degree = 0
 
     def modeling(self):
-        """
-        1. split rectangle
-        2. rectangle -> triangle
-        """
-        plane = []
-        for item in self.face:
-            while len(item) > 0:
-                plane.append(item[0:4])
-                item = item[4:]
-        tri = []
-        for item in plane:
-            tri.append([item[0], item[1], item[2]])
-            tri.append([item[0], item[2], item[3]])
-        self.face = tri
+        # splitting
+        buffer = []
+        for row in self.face:
+            size = ceil(row.shape[0] ** 0.5)
+            reshape2size = np.pad(row.astype(float), (0, size * size - row.size),
+                   mode='constant', constant_values=np.nan).reshape(size, size)
+            for i in range(reshape2size.shape[0] - 1):
+                for j in range(reshape2size.shape[1] - 1):
+                    buffer.append(reshape2size[i:i + 1 + 1, j:j + 1 + 1].reshape(-1))
+        self.face = buffer
+        # to triangle
+        buffer = []
+        for row in self.face:
+            for i in range(len(row)-3+1):
+                buffer.append([row[0], row[1+i], row[2+i]])
+        self.face = buffer
 
     def translate(self, x: float = 0, y: float = 0, z: float = 0):
         """
@@ -83,15 +85,17 @@ class Graphics:
         for row in self.face:
             buffer = []
             for col in row:
+                if np.isnan(col):
+                    continue
                 index = col - 1
-                buffer.append(camara.convert(self.vertex[index]))
-                buffer[len(buffer) - 1] = re_position(buffer[len(buffer) - 1], img.shape)
+                result = camara.convert(self.vertex[int(index)])
+                buffer.append(re_position(result, img.shape))
             for key, value in enumerate(buffer):
                 next_key = key + 1
                 next_key = 0 if next_key >= len(buffer) else next_key
                 start_point = (int(buffer[key][0]), int(buffer[key][1]))
                 end_point = (int(buffer[next_key][0]), int(buffer[next_key][1]))
-                cv2.line(img, start_point, end_point, (150, 240, 150), 2)
+                cv2.line(img, start_point, end_point, (150, 240, 150), 1)
 
     def listener(self, key):
         # Rotate

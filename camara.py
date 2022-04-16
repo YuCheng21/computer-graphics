@@ -21,7 +21,7 @@ class Camara:
         result = np.empty(3)
         result[0] = point[0] / td * self.zoom
         result[1] = point[1] / td * self.zoom
-        result[2] = point[2]
+        result[2] = point[2]  # do nothing
         return result
 
     def listener(self, key):

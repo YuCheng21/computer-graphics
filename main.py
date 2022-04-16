@@ -25,7 +25,7 @@ if __name__ == '__main__':
     obj_face = np.array(obj.face)
 
     graphics = Graphics(obj_face, obj_vertex)
-    # graphics.modeling()
+    graphics.modeling()
     # Initial
     graphics.rotate(0, axis=0)
     graphics.rotate(0, axis=1)

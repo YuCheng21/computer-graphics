@@ -18,7 +18,7 @@
 
 ## Known issues
 
-1. 4/11: \[Modeling] triangle and quadrangles splitting methods.
+1. 4/11: \[Modeling] triangle and quadrangles splitting methods. (Solve at 4/16)
 
 ## Reference
 
