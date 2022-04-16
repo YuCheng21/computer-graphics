@@ -21,11 +21,13 @@ def print_info():
 
 if __name__ == '__main__':
     obj = teapot
-    obj_vertex = np.array(obj.vertex)
-    obj_face = np.array(obj.face)
+    obj_vertex = np.array(obj.vertex, dtype=float)
+    obj_face = np.array(obj.face, dtype=int)
 
     graphics = Graphics(obj_face, obj_vertex)
+    # graphics.split()
     graphics.modeling()
+    # graphics.to_triangle()
     # Initial
     graphics.rotate(0, axis=0)
     graphics.rotate(0, axis=1)

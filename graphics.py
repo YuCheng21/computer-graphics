@@ -9,8 +9,8 @@ def re_position(point, img_shape):
     make origin point to the middle
     """
     result = np.empty(3)
-    result[0] = img_shape[0] / 2 + point[0]
-    result[1] = img_shape[1] / 2 + point[1]
+    result[0] = img_shape[0] * 0.5 + point[0]
+    result[1] = img_shape[1] * 0.5 + point[1]
     result[2] = point[2]  # do nothing
     return result
 
@@ -18,7 +18,7 @@ def re_position(point, img_shape):
 class Graphics:
     def __init__(self, face: np.ndarray = None, vertex: np.ndarray = None) -> None:
         super().__init__()
-        self.face = face
+        self.face = face - 1  # file-format start at 1.
         self.vertex = vertex
         self.init_x = 0
         self.init_y = 0
@@ -38,12 +38,22 @@ class Graphics:
                 for j in range(reshape2size.shape[1] - 1):
                     buffer.append(reshape2size[i:i + 1 + 1, j:j + 1 + 1].reshape(-1))
         self.face = buffer
-        # to triangle
+
+    def to_triangle(self):
         buffer = []
         for row in self.face:
             for i in range(len(row)-3+1):
                 buffer.append([row[0], row[1+i], row[2+i]])
         self.face = buffer
+
+    def bezier(self, p1: np.ndarray, p2: np.ndarray, p3: np.ndarray, p4: np.ndarray):
+        p12 = (p1 + p2) * 0.5
+        p23 = (p2 + p3) * 0.5
+        p34 = (p3 + p4) * 0.5
+        p1223 = (p12 + p23) * 0.5
+        p2334 = (p23 + p34) * 0.5
+        p12232334 = (p1223 + p2334) * 0.5
+        return [p1, p12, p1223, p12232334, p2334, p34, p4]
 
     def translate(self, x: float = 0, y: float = 0, z: float = 0):
         """
@@ -87,7 +97,7 @@ class Graphics:
             for col in row:
                 if np.isnan(col):
                     continue
-                index = col - 1
+                index = col
                 result = camara.convert(self.vertex[int(index)])
                 buffer.append(re_position(result, img.shape))
             for key, value in enumerate(buffer):
