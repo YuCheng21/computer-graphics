@@ -15,7 +15,7 @@ def print_info():
     cv2.putText(img, f"x: {graphics.init_x};", (325, 25), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 1)
     cv2.putText(img, f"y: {graphics.init_y};", (325, 50), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 1)
     cv2.putText(img, f"z: {graphics.init_z};", (325, 75), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 1)
-    cv2.putText(img, f"camara_distance: {camara.distance};", (10, 25), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 255), 1)
+    cv2.putText(img, f"camara_distance: {camara.z};", (10, 25), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 255), 1)
     cv2.putText(img, f"camara_zoom: {camara.zoom};", (10, 50), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 255), 1)
 
 
@@ -33,7 +33,7 @@ if __name__ == '__main__':
     graphics.rotate(0, axis=1)
     graphics.rotate(0, axis=2)
     graphics.translate(0, 0, 0)
-    camara = Camara(30, 2000, parallel=False)
+    camara = Camara((0, 0, 30), 2000, parallel=False)
 
     img_size = (500, 500)
     while True:
