@@ -25,9 +25,9 @@ if __name__ == '__main__':
     obj_face = np.array(obj.face, dtype=int)
 
     graphics = Graphics(obj_face, obj_vertex)
-    # graphics.split()
+    graphics.split()  # only teapot can use
     graphics.modeling()
-    # graphics.to_triangle()
+    graphics.to_triangle()
     # Initial
     graphics.rotate(0, axis=0)
     graphics.rotate(0, axis=1)

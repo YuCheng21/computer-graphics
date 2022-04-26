@@ -31,13 +31,37 @@ class Graphics:
         # splitting
         buffer = []
         for row in self.face:
-            size = ceil(row.shape[0] ** 0.5)
+            size = ceil(row.reshape(-1).shape[0] ** 0.5)
             reshape2size = np.pad(row.astype(float), (0, size * size - row.size),
                    mode='constant', constant_values=np.nan).reshape(size, size)
             for i in range(reshape2size.shape[0] - 1):
                 for j in range(reshape2size.shape[1] - 1):
                     buffer.append(reshape2size[i:i + 1 + 1, j:j + 1 + 1].reshape(-1))
         self.face = buffer
+
+    def split(self):
+        length = int(self.face.shape[1]**0.5)
+        buffer_face = self.face.reshape(-1, length, length)  # 4x4
+        buffer_vertex = self.vertex
+        # start loop
+        for i in range(2):  # 1: row, 2: col
+            new_first_vertex = np.empty((0, 3))
+            new_first_face = np.empty((0, (length + 3), buffer_face.shape[1]), dtype=int)
+            for index in range(buffer_face.shape[0]):  # 32
+                row_face = np.empty((0, (length + 3)), dtype=int)
+                for row in range(buffer_face.shape[1]):
+                    # calculate new point
+                    ret = self.bezier(*buffer_vertex[buffer_face[index][row]])
+                    # process face (delete and insert)
+                    row_face = np.append(row_face, [np.arange(len(new_first_vertex), len(new_first_vertex) + (length + 3), dtype=int)], 0)
+                    # process vertex (delete and insert)
+                    new_first_vertex = np.append(new_first_vertex, ret, 0)
+                row_face = row_face.transpose()
+                new_first_face = np.append(new_first_face, [row_face], 0)
+            buffer_face = new_first_face
+            buffer_vertex = new_first_vertex
+        self.face = buffer_face
+        self.vertex = buffer_vertex
 
     def to_triangle(self):
         buffer = []
