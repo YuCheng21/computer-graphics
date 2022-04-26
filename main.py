@@ -1,9 +1,11 @@
 import cv2
 import numpy as np
 from camara import Camara
+from light import Light
 from graphics import Graphics
 
 import model.teapot as teapot
+import model.teaspoon as teaspoon
 import model.square as square
 import model.triangle as triangle
 
@@ -20,14 +22,14 @@ def print_info():
 
 
 if __name__ == '__main__':
-    obj = teapot
+    obj = teaspoon
     obj_vertex = np.array(obj.vertex, dtype=float)
     obj_face = np.array(obj.face, dtype=int)
 
-    graphics = Graphics(obj_face, obj_vertex)
+    graphics = Graphics(obj_face, obj_vertex, [150, 240, 150])
     graphics.split()  # only teapot can use
     graphics.modeling()
-    graphics.to_triangle()
+    # graphics.to_triangle()
     # Initial
     graphics.rotate(0, axis=0)
     graphics.rotate(0, axis=1)
@@ -39,6 +41,7 @@ if __name__ == '__main__':
     while True:
         img = np.zeros((img_size[0], img_size[1], 3), np.uint8)
         graphics.draw_frame(img, camara)
+        # graphics.draw_flat(img, camara)
 
         print_info()
 

@@ -16,7 +16,7 @@ def re_position(point, img_shape):
 
 
 class Graphics:
-    def __init__(self, face: np.ndarray = None, vertex: np.ndarray = None) -> None:
+    def __init__(self, face: np.ndarray = None, vertex: np.ndarray = None, color: list = None) -> None:
         super().__init__()
         self.face = face - 1  # file-format start at 1.
         self.vertex = vertex
@@ -26,6 +26,7 @@ class Graphics:
         self.init_x_degree = 0
         self.init_y_degree = 0
         self.init_z_degree = 0
+        self.color = color
 
     def modeling(self):
         # splitting
@@ -41,25 +42,22 @@ class Graphics:
 
     def split(self):
         length = int(self.face.shape[1]**0.5)
-        buffer_face = self.face.reshape(-1, length, length)  # 4x4
+        buffer_face = self.face.reshape(-1, length, length)
         buffer_vertex = self.vertex
-        # start loop
         for i in range(2):  # 1: row, 2: col
-            new_first_vertex = np.empty((0, 3))
-            new_first_face = np.empty((0, (length + 3), buffer_face.shape[1]), dtype=int)
-            for index in range(buffer_face.shape[0]):  # 32
+            new_vertex = np.empty((0, 3))
+            new_face = np.empty((0, (length + 3), buffer_face.shape[1]), dtype=int)
+            for index in range(buffer_face.shape[0]):
                 row_face = np.empty((0, (length + 3)), dtype=int)
                 for row in range(buffer_face.shape[1]):
                     # calculate new point
                     ret = self.bezier(*buffer_vertex[buffer_face[index][row]])
-                    # process face (delete and insert)
-                    row_face = np.append(row_face, [np.arange(len(new_first_vertex), len(new_first_vertex) + (length + 3), dtype=int)], 0)
-                    # process vertex (delete and insert)
-                    new_first_vertex = np.append(new_first_vertex, ret, 0)
+                    row_face = np.append(row_face, [np.arange(len(new_vertex), len(new_vertex) + (length + 3), dtype=int)], 0)
+                    new_vertex = np.append(new_vertex, ret, 0)
                 row_face = row_face.transpose()
-                new_first_face = np.append(new_first_face, [row_face], 0)
-            buffer_face = new_first_face
-            buffer_vertex = new_first_vertex
+                new_face = np.append(new_face, [row_face], 0)
+            buffer_face = new_face
+            buffer_vertex = new_vertex
         self.face = buffer_face
         self.vertex = buffer_vertex
 
@@ -129,7 +127,20 @@ class Graphics:
                 next_key = 0 if next_key >= len(buffer) else next_key
                 start_point = (int(buffer[key][0]), int(buffer[key][1]))
                 end_point = (int(buffer[next_key][0]), int(buffer[next_key][1]))
-                cv2.line(img, start_point, end_point, (150, 240, 150), 1)
+                cv2.line(img, start_point, end_point, self.color, 1)
+
+    def draw_flat(self, img, camara):
+        test = self.color[2]
+        for row in self.face:
+            buffer = []
+            for col in row:
+                if np.isnan(col):
+                    continue
+                index = col
+                result = camara.convert(self.vertex[int(index)])
+                buffer.append(tuple(re_position(result, img.shape).tolist()[0:2]))
+            cv2.drawContours(img, [np.array(buffer, dtype=int)], 0, (self.color[0], self.color[1], test), -1)
+            test = test + 20 if test < 245 else 0
 
     def listener(self, key):
         # Rotate
