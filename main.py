@@ -6,6 +6,8 @@ from graphics import Graphics
 
 import model.teapot as teapot
 import model.teaspoon as teaspoon
+import model.teacup as teacup
+
 import model.square as square
 import model.triangle as triangle
 
@@ -22,7 +24,7 @@ def print_info():
 
 
 if __name__ == '__main__':
-    obj = teaspoon
+    obj = square
     obj_vertex = np.array(obj.vertex, dtype=float)
     obj_face = np.array(obj.face, dtype=int)
 
