@@ -24,7 +24,7 @@ def print_info():
 
 
 if __name__ == '__main__':
-    obj = square
+    obj = teapot
     obj_vertex = np.array(obj.vertex, dtype=float)
     obj_face = np.array(obj.face, dtype=int)
 
