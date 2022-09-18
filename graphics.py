@@ -139,8 +139,8 @@ class Graphics:
                 index = col
                 result = camara.convert(self.vertex[int(index)])
                 buffer.append(tuple(re_position(result, img.shape).tolist()[0:2]))
-            cv2.drawContours(img, [np.array(buffer, dtype=int)], 0, (self.color[0], self.color[1], test), -1)
-            test = test + 20 if test < 245 else 0
+            cv2.drawContours(img, [np.array(buffer, dtype=int)], 0, (self.color[0], test, test), -1)
+            test = test + 30 if test + 30 < 255 else test + 30 - 255
 
     def listener(self, key):
         # Rotate
