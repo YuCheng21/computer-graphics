@@ -1,6 +1,6 @@
 # Computer Graphics 電腦圖學
 
-| <img src="./screenshot/source.gif" width="310"/> | <img src="./screenshot/bezier.gif" width="310"/> |
+| <img src="./screenshot/source.gif" width="310"/> | <img src="./screenshot/Bezier.gif" width="310"/> |
 |:------------------------------------------------:|:------------------------------------------------:|
 |                      Source                      |                      Bezier                      |
 
